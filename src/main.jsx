@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       domain="dev-ojb6jwvu0a36hbex.us.auth0.com"
       clientId="OypGzh938aWgJuR9jWMwJtApLO9OEXvr"
       authorizationParams={{
-        redirect_uri: "http://localhost:5173/"
+        redirect_uri: "http://localhost:5173/profile"
       }}
     >
       <BrowserRouter>

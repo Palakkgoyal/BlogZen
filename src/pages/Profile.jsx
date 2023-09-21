@@ -1,10 +1,13 @@
 import React from 'react'
+import { ProfileComponent } from '../components';
 
 const Profile = () => {
+
   return (
     <div>
-      Profile
+      <ProfileComponent />
     </div>
+    
   )
 }
 

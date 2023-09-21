@@ -1,7 +1,7 @@
 import './App.css'
 
 import { Route, Routes } from "react-router-dom";
-import { Layout, Home, Profile } from "./pages"
+import { Layout, Home, Profile, Draft } from "./pages"
 
 function App() {
 
@@ -10,6 +10,7 @@ function App() {
       <Route path="/" element={ <Layout /> }>
         <Route index element={ <Home /> } />
         <Route path="/profile" element={ <Profile /> } />
+        <Route path="/draft" element={ <Draft /> } />
         <Route path="*" element={ <p>Not Found</p> } />
       </Route>
     </Routes>
