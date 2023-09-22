@@ -1,4 +1,5 @@
 import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
+import { toast } from "react-toastify";
 
 export function generateUuid(arg) {
     const namespace = uuidv4();
@@ -23,8 +24,13 @@ export default async function createUser(name, email) {
             }),
         });
         localStorage.removeItem("isAuthenticated")
+        toast.error("Logged In successfully!", {
+            position: toast.POSITION.TOP_RIGHT
+        })
     } catch (error) {
-        console.error(error, "err")
+        toast.error("There was an error while logging in!", {
+            position: toast.POSITION.TOP_RIGHT
+        })
     }
 }
 
@@ -44,7 +50,9 @@ export async function getUser(email) {
         const userData = await response.json(); // Parse the response body as JSON
         return userData; // Return the parsed data
     } catch (error) {
-        console.error("Error fetching user:", error);
+        toast.error("There was an error while getting user!", {
+            position: toast.POSITION.TOP_RIGHT
+        })
         throw error; // Rethrow the error to handle it elsewhere if needed
     }
 }

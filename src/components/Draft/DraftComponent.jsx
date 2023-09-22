@@ -3,13 +3,19 @@ import { useState, useRef, useEffect } from "react"
 import { CiImageOn } from "react-icons/ci";
 import { useAuth0, } from "@auth0/auth0-react";
 import { getUser, generateUuid } from "../../js/utils";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import Loader from "../Loader/Loader"
 
 const DraftComponent = () => {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [coverImage, setCoverImage] = useState("")
+  const [isPosting, setIsPosting] = useState(false)
   const titleRef = useRef(null)
   const contentRef = useRef(null)
+
+  const navigate = useNavigate()
   useTextareaResize(titleRef)
   useTextareaResize(contentRef)
 
@@ -19,54 +25,96 @@ const DraftComponent = () => {
     setCoverImage(e.target.files[0]);
   }
 
-  async function handlePublish() {
+  async function handlePublish(publish) {
+    setIsPosting(true)
+    if (title.length < 2) {
+      toast.error("Please write a valid title!", {
+        position: toast.POSITION.TOP_RIGHT
+      })
+      setIsPosting(false)
+      return
+    }
+
+    if (content.length < 5) {
+      toast.error("Please write a longer content!", {
+        position: toast.POSITION.TOP_RIGHT
+      })
+      setIsPosting(false)
+      return
+    }
+
+    const url = publish ? "https://wasteful-brown.cmd.outerbase.io/createBlog" : "https://wasteful-brown.cmd.outerbase.io/createDraft"
+
     const user_id = await getUser(user?.email)
       .then((res) => {
-        console.log( res.response.items[0].user_id, "user_id got it")
         return res.response.items[0].user_id
+      })
+      .catch((err) => {
+        setIsPosting(false)
+        console.error(err)
       })
 
     const image_id = await uploadImage()
       .then((res) => {
-        console.log(res.public_id, "image_id got it")
         return res.public_id
+      })
+      .catch((err) => {
+        setIsPosting(false)
+        console.error(err)
       })
 
     if (user_id) {
-      if (coverImage.name.length > 1 && image_id) {
-        console.log("uploading...")
-        const generatedUuid = generateUuid(coverImage.name)
+      const generatedUuid = generateUuid(coverImage?.name ? coverImage.name : "")
 
-        async function publishBlog() {
-          try {
-            await fetch(`https://wasteful-brown.cmd.outerbase.io/createBlog`, {
-              method: "POST",
-              headers: {
-                "content-type": "application/json",
-              },
-              body: JSON.stringify({
-                post_id: generatedUuid,
-                user_id: user_id,
-                title: title,
-                content: content,
-                image_id: image_id
-              }),
-            });
+      async function publishBlog() {
+        try {
+          await fetch(url, {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({
+              post_id: generatedUuid,
+              user_id: user_id,
+              title: title,
+              content: content,
+              image_id: image_id
+            }),
+          });
 
-            console.log("done")
-          } catch (error) {
-            console.error(error, "err")
-          }
+          const publish_msg = publish ? "Blog published successfully!" : "Saved as draft successfully!"
+
+          // RESET STATE 
+          setTitle("")
+          setContent("")
+          setCoverImage("")
+
+          toast.success(publish_msg, {
+            position: toast.POSITION.TOP_RIGHT
+          })
+
+          navigate("/")
+        } catch (error) {
+          console.error(error)
+          toast.error("An error occured, please try again later", {
+            position: toast.POSITION.TOP_RIGHT
+          })
         }
 
-        await publishBlog()
+        finally {
+          () => {
+            setIsPosting(false)
+          }
+        }
       }
 
+      await publishBlog()
     }
+
   }
 
   async function uploadImage() {
-    if (coverImage.name.length < 2) return { public_id: null }
+    if (!coverImage?.name) return { public_id: null }
 
     // Create a FormData object to hold the image data and other parameters
     const formData = new FormData();
@@ -92,7 +140,9 @@ const DraftComponent = () => {
         imgData = data;
       })
       .catch(function (error) {
-        console.error("There was a problem with the fetch operation:", error);
+        toast.error("There was an error while uploading image!", {
+          position: toast.POSITION.TOP_RIGHT
+        })
       });
 
     return imgData;
@@ -100,7 +150,7 @@ const DraftComponent = () => {
 
 
   return (
-    <div className="draft_container">
+    <div className="draft_container" style={{ position: "relative" }}>
       <div className="draft_cover_image_container">
         <label htmlFor="cover_image" className="draft_add_cover_btn">
           <CiImageOn />
@@ -122,7 +172,7 @@ const DraftComponent = () => {
       </div>
 
       {/* <img src="https://res.cloudinary.com/dxzo4ug5i/image/upload/uv00s0abnrtdoaln3g9b" alt="" /> */}
-      <div>
+      <div style={{ position: "relative" }}>
         <textarea
           name="title"
           id=""
@@ -147,10 +197,21 @@ const DraftComponent = () => {
           placeholder="Breate. | Write. | Reflect..."
         ></textarea>
       </div>
-
-      <button onClick={handlePublish}>
-        Publish
-      </button>
+      {isPosting && <Loader />}
+      <div className="blog_btn_container">
+        <button
+          className="save_draft_btn blog_btn"
+          onClick={() => handlePublish(false)}
+        >
+          Save Draft
+        </button>
+        <button
+          className="publish_blog_btn blog_btn"
+          onClick={() => handlePublish(true)}
+        >
+          Publish
+        </button>
+      </div>
     </div>
   )
 }

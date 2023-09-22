@@ -2,10 +2,13 @@ import './App.css'
 
 import { Route, Routes } from "react-router-dom";
 import { Layout, Home, Profile, Draft } from "./pages"
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
 
   return (
+    <>
     <Routes>
       <Route path="/" element={ <Layout /> }>
         <Route index element={ <Home /> } />
@@ -14,6 +17,8 @@ function App() {
         <Route path="*" element={ <p>Not Found</p> } />
       </Route>
     </Routes>
+    <ToastContainer />
+    </>
   )
 }
 
