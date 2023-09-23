@@ -1,8 +1,10 @@
 import React from 'react'
+import { HomeComponent } from '../components'
 
 const Home = () => {
   return (
-    <div style={{ fontSize: "2em", color: "salmon" }}>
+    <div>
+      <HomeComponent />
     </div>
   )
 }

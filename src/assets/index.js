@@ -3,6 +3,7 @@ import logo_transparent from "./BlogZen-logos_transparent.png"
 import logo_white from "./BlogZen-logos_white.png"
 import logo from "./BlogZen-logos.jpeg"
 import B_logo from "./logo.jpeg"
+import user from "./user.png"
 
 export {
     logo_black,
@@ -10,4 +11,5 @@ export {
     logo_white,
     logo,
     B_logo,
+    user,
 }

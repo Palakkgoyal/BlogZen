@@ -8,7 +8,7 @@ export function generateUuid(arg) {
     return generatedUuid
 }
 
-export default async function createUser(name, email) {
+export default async function createUser(name, email, image) {
     const generatedUuid = generateUuid(email);
 
     try {
@@ -21,6 +21,7 @@ export default async function createUser(name, email) {
                 user_id: generatedUuid,
                 name: name,
                 email: email,
+                image: image,
             }),
         });
         localStorage.removeItem("isAuthenticated")
@@ -34,9 +35,11 @@ export default async function createUser(name, email) {
     }
 }
 
-export async function getUser(email) {
+export async function getUser(paramVal, byEmail=true) {
+    const param = byEmail? "email" : "user_id"
+    const endpoint = byEmail? "getUser" : "getUserById"
     try {
-        const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/getUser?email=${email}`, {
+        const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/${endpoint}?${param}=${paramVal}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

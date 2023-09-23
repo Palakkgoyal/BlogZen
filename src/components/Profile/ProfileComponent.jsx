@@ -9,7 +9,7 @@ const ProfileComponent = () => {
     useEffect(() => {
         const isAuthenticated = localStorage.getItem("isAuthenticated")
         if(isAuthenticated && user) {
-            createUser(user?.name, user?.email)
+            createUser(user?.name, user?.email, user?.picture)
         }
     }, [])
 
