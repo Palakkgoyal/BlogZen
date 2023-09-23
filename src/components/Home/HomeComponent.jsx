@@ -1,8 +1,11 @@
 import "./HomeComponent.css"
-import { user, logo } from "../../assets"
+import { user } from "../../assets"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import { getUser } from "../../js/utils"
+
+// React icons 
 import { BsPencil, BsLinkedin, BsDiscord } from "react-icons/bs";
 import { FaXTwitter, FaHashnode } from "react-icons/fa6";
 import { BiBookmarkPlus } from "react-icons/bi";
@@ -10,11 +13,21 @@ import { PiChatsCircleLight } from "react-icons/pi";
 
 const HomeComponent = () => {
     const [blogs, setBlogs] = useBlogs()
+    const navigate = useNavigate()
 
-    console.log(blogs)
+    function formatTimestamp(time) {
+        const timeArr = time.split("T")[0].split("-") // YY - MM - DD
+        const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        const formattedStr = `${monthArr[+timeArr[1] - 1]} ${timeArr[2]}, ${timeArr[0]}`
+
+        return formattedStr;
+    }
 
     let mappedBlogs = blogs.map((blog) => {
+        // 2023-09-22T11:42:51Z
+        console.log(blog)
         const cover_img_url = `https://res.cloudinary.com/dxzo4ug5i/image/upload/${blog.image_id}`
+        const timestamp = formatTimestamp(blog.timestamp)
         return (
             <div className="hb_container" key={blog.post_id}> 
                 <div className="hb_user_details">
@@ -24,10 +37,10 @@ const HomeComponent = () => {
                     />
                     <div>
                         <h3 className="hb_user_name">{blog.user.name}</h3>
-                        <p className="hb_post_date">Sep 20, 2023</p>
+                        <p className="hb_post_date">{timestamp}</p>
                     </div>
                 </div>
-                <div className="hb_blog_details">
+                <div className="hb_blog_details" onClick={() => navigate(`/blog/${blog.post_id}`)}>
                     {blog.image_id !== "%!s(<nil>)" && (
                         <div className="hb_cover_image_container">
                             <img src={cover_img_url} alt={blog.title} className="hb_cover_image" />
