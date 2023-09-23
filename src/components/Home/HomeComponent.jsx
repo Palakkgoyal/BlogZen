@@ -3,6 +3,10 @@ import { user, logo } from "../../assets"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { getUser } from "../../js/utils"
+import { BsPencil, BsLinkedin, BsDiscord } from "react-icons/bs";
+import { FaXTwitter, FaHashnode } from "react-icons/fa6";
+import { BiBookmarkPlus } from "react-icons/bi";
+import { PiChatsCircleLight } from "react-icons/pi";
 
 const HomeComponent = () => {
     const [blogs, setBlogs] = useBlogs()
@@ -12,7 +16,7 @@ const HomeComponent = () => {
     let mappedBlogs = blogs.map((blog) => {
         const cover_img_url = `https://res.cloudinary.com/dxzo4ug5i/image/upload/${blog.image_id}`
         return (
-            <div className="hb_container">
+            <div className="hb_container" key={blog.post_id}> 
                 <div className="hb_user_details">
                     <img src={blog?.user?.picture ? blog.user.picture : user}
                         alt={blog?.user?.name}
@@ -25,16 +29,26 @@ const HomeComponent = () => {
                 </div>
                 <div className="hb_blog_details">
                     {blog.image_id !== "%!s(<nil>)" && (
-                        <img src={cover_img_url} alt={blog.title} className="hb_cover_image" />
+                        <div className="hb_cover_image_container">
+                            <img src={cover_img_url} alt={blog.title} className="hb_cover_image" />
+                        </div>
                     )}
                     <div>
                         <h2 className="hb_title">
                             {blog.title}
                         </h2>
                         <p className="hb_content">
-                            {blog.content.substring(0,250)}...
+                            {blog.content.substring(0, 250)}...
                         </p>
                     </div>
+                </div>
+                <div className="hb_footer">
+                    <button className="hb_footer_btn">
+                        <PiChatsCircleLight className="hb_footer_icon"/> Discuss
+                    </button>
+                    <button className="hb_footer_btn">
+                        <BiBookmarkPlus className="hb_footer_icon" />
+                    </button>
                 </div>
             </div>
         )
@@ -44,33 +58,88 @@ const HomeComponent = () => {
         <div className="home_main_container">
             <div className="home_blog_main_container">
                 {mappedBlogs}
-                {/* <div className="hb_container">
-                    <div className="hb_user_details">
-                        <img src={user} alt="" className="hb_user_image" />
-                        <div>
-                            <h3 className="hb_user_name">Palak Goyal</h3>
-                            <p className="hb_post_date">Sep 20, 2023</p>
-                        </div>
+            </div>
+
+            <div className="home_sidebar_container">
+                <div className="home_section_container">
+                    <div className="hd_header_container">
+                        <h2 className="hd_title">
+                            Drafts (1)
+                        </h2>
+                        <button className="hd_get_all_cta">
+                            See All
+                        </button>
                     </div>
-                    <div className="hb_blog_details">
-                        <img src={logo} alt="" className="hb_cover_image" />
+                    <div>
+                        <h3>
+                            Title of the draft draft draft kjsdkf...
+                        </h3>
+                    </div>
+                    <div className="hd_details">
+                        <p>
+                            Edited {" "}
+                            <span className="hd_edited_time">
+                                Just Now
+                            </span>
+                        </p>
+                        <button className="hd_edit_cta">
+                            Continue Editing <BsPencil />
+                        </button>
+                    </div>
+                </div>
+                <div className="home_section_container">
+                    <h2 className="hd_title">
+                        Trending Articles
+                    </h2>
+                    <div className="trending_articles_container">
                         <div>
-                            <h2 className="hb_title">
-                                Full Title of the blog
-                            </h2>
-                            <p className="hb_content">
-                                Initial lines of blog...
-                                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium distinctio nulla in eos sed. Voluptatibus iusto eaque itaque voluptatum nulla accusamus, quasi, ex quo veniam consequuntur consequatur aliquam, provident odit.
+                            <h3 style={{cursor: "pointer"}}>
+                                Title of the draft draft draft kjsdk and
+                                understanding its meaning
+                            </h3>
+                            <p className="hd_details" style={{marginTop: "10px", cursor: "pointer"}}>
+                                Palak Goyal
+                            </p>
+                        </div>
+                        <div>
+                            <h3>
+                                Title of the draft draft draft kjsdk and
+                                understanding its meaning
+                            </h3>
+                            <p className="hd_details" style={{marginTop: "10px"}}>
+                                Palak Goyal
+                            </p>
+                        </div>
+                        <div>
+                            <h3>
+                                Title of the draft draft draft kjsdk and
+                                understanding its meaning
+                            </h3>
+                            <p className="hd_details" style={{marginTop: "10px"}}>
+                                Palak Goyal
                             </p>
                         </div>
                     </div>
-                </div> */}
-            </div>
-
-
-            <div className="home_user_container">
-                skdfksjkfd
+                </div>
+                <div className="home_section_container">
+                    <h2 className="hd_title" style={{ fontSize: "20px" }}>
+                        Connect With Us
+                    </h2>
+                    <div className="sidebar_footer_links">
+                        <a href="https://twitter.com/palaktwts">
+                            <FaXTwitter className="footer_link" />
+                        </a>
+                        <a href="https://hashnode.com/@Palakkgoyal">
+                            <FaHashnode className="footer_link" />
+                        </a>
+                        <a href="https://www.linkedin.com/in/palak-goyal-037a02269/">
+                            <BsLinkedin className="footer_link" />
+                        </a>
+                        <a href="">
+                            <BsDiscord className="footer_link" />
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     )
