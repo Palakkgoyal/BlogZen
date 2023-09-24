@@ -1,7 +1,7 @@
 import './App.css'
 
 import { Route, Routes } from "react-router-dom";
-import { Layout, Home, Profile, Draft } from "./pages"
+import { Layout, Home, Profile, Draft, Blog } from "./pages"
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
@@ -14,6 +14,7 @@ function App() {
         <Route index element={ <Home /> } />
         <Route path="/profile" element={ <Profile /> } />
         <Route path="/draft" element={ <Draft /> } />
+        <Route path="/blog/:post_id" element={ <Blog /> } />
         <Route path="*" element={ <p>Not Found</p> } />
       </Route>
     </Routes>

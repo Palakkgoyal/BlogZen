@@ -171,7 +171,6 @@ const DraftComponent = () => {
         )}
       </div>
 
-      {/* <img src="https://res.cloudinary.com/dxzo4ug5i/image/upload/uv00s0abnrtdoaln3g9b" alt="" /> */}
       <div style={{ position: "relative" }}>
         <textarea
           name="title"

@@ -60,3 +60,33 @@ export async function getUser(paramVal, byEmail=true) {
     }
 }
 
+export async function getBlog(paramVal, byPostId=true) {
+    const param = byPostId? "post_id" : "user_id"
+    const endpoint = byPostId? "getBlogById" : "getBlogByUserId"
+    try {
+        const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/${endpoint}?${param}=${paramVal}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status}`);
+        }
+
+        const blogData = await response.json(); // Parse the response body as JSON
+        return blogData; // Return the parsed data
+    } catch (error) {
+        toast.error("There was an error while getting user!", {
+            position: toast.POSITION.TOP_RIGHT
+        })
+        throw error; // Rethrow the error to handle it elsewhere if needed
+    }
+}
+
+export function getCloudinaryImgUrl(img_id) {
+    if (!img_id) return ""
+    
+    return `https://res.cloudinary.com/dxzo4ug5i/image/upload/${img_id}`
+}

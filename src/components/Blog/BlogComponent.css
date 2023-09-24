@@ -1,0 +1,124 @@
+.blog_page_main_container {
+    border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.blog_page_blog_container {
+    max-width: 900px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 55px;
+}
+
+.bp_image_container {
+    width: 100%;
+}
+
+.bp_image {
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    margin-top: 15px;
+    margin-bottom: 40px;
+}
+
+.bp_text_container {
+    max-width: 100%;
+}
+
+.bp_title {
+    max-width: 700px;
+    font-size: 54px;
+    color: white;
+    text-align: center;
+    margin: auto;
+    margin-bottom: 40px;
+}
+
+.bp_content {
+    color: #fafafa;
+    font-size: 22px;
+    overflow-wrap: break-word;
+    font-size: 1.35rem;
+    line-height: 1.8;
+    margin-bottom: 1.2em;
+    margin-top: 0;
+    font-weight: 500;
+}
+
+.bp_author_container {
+    /* border: 1px solid red; */
+    border-top: 1px solid rgb(118, 118, 118);
+    border-bottom: 1px solid rgb(118, 118, 118);
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    gap: 20px;
+    padding-block: 60px;
+}
+
+.bpa_image {
+    width: 100px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.bpa_heading {
+    font-size: 18px;
+    color: rgb(189, 186, 186);
+    margin-bottom: 10px;
+    font-weight: 400;
+}
+
+.bpa_name {
+    font-size: 30px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.bp_suggestions_container {
+    border: 1px solid red;
+    width: 100vw;
+    max-width: 1400px;
+    padding: 50px;
+    padding-block: 80px;
+}
+
+.bps_heading {
+    color: white;
+    text-align: center;
+    font-size: 30px;
+    color: #bfbebe;
+    font-weight: 500;
+}
+
+@media (max-width: 800px) {
+    .bp_image_container {
+        width: 100vw;
+        max-width: 650px;
+        aspect-ratio: 7/4;
+    }
+
+    .bp_title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .bp_content {
+        font-size: 1.125rem;
+        line-height: 1.7777778;
+        margin-bottom: 0;
+    }
+}
