@@ -25,7 +25,6 @@ const HomeComponent = () => {
 
     let mappedBlogs = blogs.map((blog) => {
         // 2023-09-22T11:42:51Z
-        console.log(blog)
         const cover_img_url = `https://res.cloudinary.com/dxzo4ug5i/image/upload/${blog.image_id}`
         const timestamp = formatTimestamp(blog.timestamp)
         return (

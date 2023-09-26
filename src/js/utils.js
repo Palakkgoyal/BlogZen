@@ -62,7 +62,7 @@ export async function getUser(paramVal, byEmail=true) {
 
 export async function getBlog(paramVal, byPostId=true) {
     const param = byPostId? "post_id" : "user_id"
-    const endpoint = byPostId? "getBlogById" : "getBlogByUserId"
+    const endpoint = byPostId? "getBlogById" : "getBlogsByUserId"
     try {
         const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/${endpoint}?${param}=${paramVal}`, {
             method: 'GET',
@@ -86,7 +86,7 @@ export async function getBlog(paramVal, byPostId=true) {
 }
 
 export function getCloudinaryImgUrl(img_id) {
-    if (!img_id) return ""
+    if (!img_id || img_id === "%!s(<nil>)") return ""
     
     return `https://res.cloudinary.com/dxzo4ug5i/image/upload/${img_id}`
 }
