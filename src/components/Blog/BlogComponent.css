@@ -68,6 +68,11 @@
 .extras_icon {
     cursor: pointer;
     font-weight: 500;
+    font-size: 30px;
+}
+
+.extras_like_icon {
+    font-size: 35px;
 }
 
 .comments_main_container {
@@ -164,6 +169,7 @@
     font-size: 19px;
     color: rgb(225, 224, 224);
     margin-top: 3px;
+    margin-left: 40px;
 }
 
 .bp_author_container {

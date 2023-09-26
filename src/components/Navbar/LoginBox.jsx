@@ -20,7 +20,7 @@ function LoginBox({ setOpenLoginBox }) {
         
     return (
         <div className="login_box">
-            <div style={{ position: "relative" }}>
+            <div className="login_sub_container" style={{ position: "relative" }}>
                 <AiOutlineClose
                     className="login_close_icon"
                     onClick={() => setOpenLoginBox(false)}

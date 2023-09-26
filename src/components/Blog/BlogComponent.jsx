@@ -5,9 +5,15 @@ import { getBlog, getCloudinaryImgUrl, getUser } from '../../js/utils'
 import { logo, B_logo, user as userImg, default_cover_img } from "../../assets"
 import { FaRegCommentDots } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
+import { BiHeart } from "react-icons/bi";
+import { BsBookmark } from "react-icons/bs";
+import { toast } from "react-toastify";
+
 
 const BlogComponent = () => {
     const [blog, setBlog] = useBlog()
+    const [comment, setComment] = useState("")
+    const { post_id } = useParams()
     const navigate = useNavigate()
     const content = blog?.content?.split('\n');
     const blogImgSrc = getCloudinaryImgUrl(blog?.image_id)
@@ -15,7 +21,59 @@ const BlogComponent = () => {
     const user_id = blog?.user_id
     const [user, setUser] = useUser(user_id)
     const [suggestions, setSuggestions] = useSuggestions(user_id)
-    console.log(user)
+    const [comments, setComments] = useComments()
+
+    async function handleComment() {
+        if (!post_id || !user_id || comment.length === 0) return
+        try {
+            await fetch(`https://wasteful-brown.cmd.outerbase.io/createComment`, {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    post_id: post_id,
+                    user_id: user_id,
+                    comment_text: comment,
+                }),
+            });
+            setComment("")
+            toast.success("Comment sent successfully", {
+                position: toast.POSITION.TOP_RIGHT
+            })
+        }
+        catch (error) {
+            toast.error("There was an error sending comment", {
+                position: toast.POSITION.TOP_RIGHT
+            })
+        }
+    }
+
+    const commentsArr = comments.map((comment, idx) => {
+        const { comment_text, comment_id, user } = comment
+        return (
+            <div
+                className={`comment ${idx === comments.length - 1 && "last_comment_border"}`}
+                key={comment_id}
+            >
+                <div className="comment_header">
+                    <div className="comment_doer_image">
+                        <img
+                            src={user?.image ? user.image : userImg}
+                            alt={user.name}
+                            className="bp_img"
+                        />
+                    </div>
+                    <h3 className="comment_doer_name">
+                        {user?.name}
+                    </h3>
+                </div>
+                <p className="commment_doer_text">
+                    {comment_text}
+                </p>
+            </div>
+        )
+    })
 
     const suggestionsArr = suggestions.map((suggestion) => {
         const cover_img = getCloudinaryImgUrl(suggestion?.image_id)
@@ -82,11 +140,11 @@ const BlogComponent = () => {
             </div>
 
             <div className="extras_container">
-                <div className="extras_icon extras_like_icon">
-                    Like (11)
+                <div className="">
+                    <BiHeart className="extras_icon extras_like_icon" /> (11)
                 </div>
-                <div className="extras_icon extras_bookmark_icon">
-                    Bookmark
+                <div className="extras_bookmark_icon">
+                    <BsBookmark className="extras_icon" />
                 </div>
             </div>
 
@@ -97,41 +155,24 @@ const BlogComponent = () => {
                 </div>
                 <div>
                     <div className="comment_input_container">
-                        <input type="text" placeholder="Add a comment" className="comment_input" />
-                        <IoSend className="comment_send_icon" />
+                        <input
+                            type="text"
+                            placeholder="Add a comment"
+                            className="comment_input"
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                        />
+                        <IoSend className="comment_send_icon" onClick={handleComment} />
                     </div>
-                    {/* <div className="no_comments">
-                        <p>No comments yet...</p>
-                    </div> */}
+
                     <div className="comments_sub_container">
-                        <div className="comment">
-                            <div className="comment_header">
-                                <div className="comment_doer_image">
-                                    <img src={userImg} alt="" className="bp_img" />
-                                </div>
-                                <h3 className="comment_doer_name">
-                                    Name Name
-                                </h3>
+                        {comments.length === 0 ? (
+                            <div className="no_comments">
+                                <p>No comments yet...</p>
                             </div>
-                            <p className="commment_doer_text">
-                                This article is really amazing and easy to understand.
-                                Thanks a lot for sharing.
-                            </p>
-                        </div>
-                        <div className="comment last_comment_border">
-                            <div className="comment_header">
-                                <div className="comment_doer_image">
-                                    <img src={userImg} alt="" className="bp_img" />
-                                </div>
-                                <h3 className="comment_doer_name">
-                                    Name Name
-                                </h3>
-                            </div>
-                            <p className="commment_doer_text">
-                                This article is really amazing and easy to understand.
-                                Thanks a lot for sharing.
-                            </p>
-                        </div>
+                        ) : (
+                            commentsArr
+                        )}
                     </div>
                 </div>
             </div>
@@ -177,7 +218,7 @@ function useBlog() {
         async function getBlogData() {
             const blogData = await getBlog(post_id, true)
             setBlog(blogData?.response?.items[0])
-            // window.scrollTo(0, 0)
+            window.scrollTo(0, 0)
         }
         getBlogData()
     }, [post_id])
@@ -211,4 +252,59 @@ function useSuggestions(user_id) {
     }, [user_id])
 
     return [suggestions, setSuggestions]
+}
+
+function useComments() {
+    const { post_id } = useParams();
+    const [comments, setComments] = useState([])
+
+    useEffect(() => {
+        async function getComments() {
+            try {
+                const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/getComments?post_id=${post_id}`, {
+                    'method': 'GET',
+                    'headers': {
+                        'content-type': 'application/json'
+                    },
+                })
+
+                if (!response.ok) {
+                    toast.error("There was an error getting comments!", {
+                        position: toast.POSITION.TOP_RIGHT
+                    })
+                    throw new Error(`HTTP Error! Status: ${response.status}`)
+                }
+
+                let data = await response.json();
+                data = data.response.items
+                data = await Promise.all(data.map(async (comment) => {
+                    try {
+                        const user = await getUser(comment.user_id, false);
+                        return {
+                            ...comment,
+                            user: user.response.items[0],
+                        };
+                    } catch (error) {
+                        toast.error("There was an error getting comments!", {
+                            position: toast.POSITION.TOP_RIGHT
+                        })
+                        return comment; // Return the original blog item without the user information.
+                    }
+                }))
+
+                setComments(data)
+            }
+
+            catch (error) {
+                toast.error("There was an error getting comments!", {
+                    position: toast.POSITION.TOP_RIGHT
+                })
+                throw error;
+            }
+        }
+
+        getComments()
+    }, [post_id])
+
+    return [comments, setComments]
 }
