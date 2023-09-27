@@ -75,6 +75,10 @@
     font-size: 35px;
 }
 
+.filled_bookmarked {
+    fill: green;
+}
+
 .comments_main_container {
     /* border: 1px solid red; */
     width: 100%;

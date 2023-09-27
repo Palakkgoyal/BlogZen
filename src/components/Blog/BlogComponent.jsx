@@ -6,8 +6,9 @@ import { logo, B_logo, user as userImg, default_cover_img } from "../../assets"
 import { FaRegCommentDots } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
 import { BiHeart } from "react-icons/bi";
-import { BsBookmark } from "react-icons/bs";
+import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
 import { toast } from "react-toastify";
+import { useAuth0 } from "@auth0/auth0-react"
 
 
 const BlogComponent = () => {
@@ -22,6 +23,9 @@ const BlogComponent = () => {
     const [user, setUser] = useUser(user_id)
     const [suggestions, setSuggestions] = useSuggestions(user_id)
     const [comments, setComments] = useComments()
+    const [isBookmarked, setIsBookmarked] = useBookmark()
+    const { user: user_current } = useAuth0()
+
 
     async function handleComment() {
         if (!post_id || !user_id || comment.length === 0) return
@@ -115,6 +119,50 @@ const BlogComponent = () => {
         )
     })
 
+
+    async function createBookmark() {
+        try {
+            await fetch(`https://wasteful-brown.cmd.outerbase.io/postBookmark`, {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: user_current?.email,
+                    post_id: post_id,
+                }),
+            });
+
+            toast.success("Bookmarked!", {
+                position: toast.POSITION.TOP_RIGHT
+            })
+
+            setIsBookmarked(true)
+        } catch (error) {
+            toast.error("There was an error bookmarking!", {
+                position: toast.POSITION.TOP_RIGHT
+            })
+        }
+    }
+
+    async function deleteBookmark() {
+        try {
+            fetch(`https://wasteful-brown.cmd.outerbase.io/deleteBookmark?post_id=${post_id}&email=${user_current.email}`, {
+                'method': 'DELETE',
+                'headers': {
+                    'content-type': 'application/json'
+                },
+            })
+
+            setIsBookmarked(false)
+        }
+        catch (error) {
+            toast.error("There was an error remove bookmarking!", {
+                position: toast.POSITION.TOP_RIGHT
+            })
+        }
+    }
+
     return (
         <div className="blog_page_main_container">
             <div className="blog_page_blog_container">
@@ -143,8 +191,18 @@ const BlogComponent = () => {
                 <div className="">
                     <BiHeart className="extras_icon extras_like_icon" /> (11)
                 </div>
-                <div className="extras_bookmark_icon">
-                    <BsBookmark className="extras_icon" />
+                <div className="">
+                    {isBookmarked ? (
+                        <BsFillBookmarkFill
+                            className="extras_icon filled_bookmarked"
+                            onClick={deleteBookmark}
+                        />
+                    ) : (
+                        <BsBookmark
+                            className="extras_icon"
+                            onClick={createBookmark}
+                        />
+                    )}
                 </div>
             </div>
 
@@ -307,4 +365,43 @@ function useComments() {
     }, [post_id])
 
     return [comments, setComments]
+}
+
+
+function useBookmark() {
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const { post_id } = useParams()
+    const { user } = useAuth0()
+
+    const email = user?.email
+
+    useEffect(() => {
+        async function getBookmark() {
+            try {
+                const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/getBookmarkOfPost?post_id=${post_id}&email=${email}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP Error! Status: ${response.status}`);
+                }
+
+                const bookmarkData = await response.json(); // Parse the response body as JSON
+                const bookmarked = bookmarkData.response.items.length > 0;
+                setIsBookmarked(bookmarked)
+            } catch (error) {
+                toast.error("There was an error while getting user!", {
+                    position: toast.POSITION.TOP_RIGHT
+                })
+                throw error; // Rethrow the error to handle it elsewhere if needed
+            }
+        }
+
+        //    getBookmark()
+    }, [])
+
+    return [isBookmarked, setIsBookmarked]
 }

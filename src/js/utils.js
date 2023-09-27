@@ -25,7 +25,7 @@ export default async function createUser(name, email, image) {
             }),
         });
         localStorage.removeItem("isAuthenticated")
-        toast.error("Logged In successfully!", {
+        toast.success("Logged In successfully!", {
             position: toast.POSITION.TOP_RIGHT
         })
     } catch (error) {
