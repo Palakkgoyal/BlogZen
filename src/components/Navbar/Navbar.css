@@ -83,6 +83,13 @@
     padding: 0;
 }
 
+.user_image_nav {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
 .login_box {
     position: absolute;
     font-size: 18px;

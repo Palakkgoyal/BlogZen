@@ -282,14 +282,16 @@ function useBlog() {
 
 
 function useUser(user_id) {
-    const [user, setUser] = useState({})
+    const [user, setUser] = useState({});
+    const { post_id } = useParams();
+     
     useEffect(() => {
         async function getUserData() {
             const userData = await getUser(user_id, false)
             setUser(userData?.response?.items[0])
         }
         getUserData()
-    }, [user_id])
+    }, [user_id, post_id])
 
     return [user, setUser]
 }

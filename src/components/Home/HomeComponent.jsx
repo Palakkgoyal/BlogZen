@@ -22,7 +22,7 @@ const HomeComponent = () => {
         return (
             <div className="hb_container" key={blog.post_id}> 
                 <div className="hb_user_details">
-                    <img src={blog?.user?.picture ? blog.user.picture : user}
+                    <img src={blog?.user?.image ? blog.user.image : user}
                         alt={blog?.user?.name}
                         className="hb_user_image"
                     />

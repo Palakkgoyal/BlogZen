@@ -60,11 +60,12 @@ export async function getUser(paramVal, byEmail=true) {
     }
 }
 
-export async function getBlog(paramVal, byPostId=true) {
+export async function getBlog(paramVal, byPostId=true, endpoint) {
     const param = byPostId? "post_id" : "user_id"
-    const endpoint = byPostId? "getBlogById" : "getBlogsByUserId"
+    const blogEndpoint = endpoint? endpoint : byPostId? "getBlogById" : "getBlogsByUserId"
+
     try {
-        const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/${endpoint}?${param}=${paramVal}`, {
+        const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/${blogEndpoint}?${param}=${paramVal}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

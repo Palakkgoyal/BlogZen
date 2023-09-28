@@ -14,7 +14,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [openLoginBox, setOpenLoginBox] = useState(false)
 
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
 
   const navRef = useRef(null)
   useScroll(navRef)
@@ -54,7 +54,16 @@ const Navbar = () => {
               </span>
             </li>
             <li className="nav_icon profile_icon">
-              <BiSolidUserCircle onClick={handleProfile} />
+              {user?.picture ? (
+                <img
+                  src={user.picture}
+                  alt={user?.name}
+                  onClick={handleProfile}
+                  className="user_image_nav"
+                />
+              ) : (
+                <BiSolidUserCircle onClick={handleProfile} />
+              )}
             </li>
           </ul>
         </nav>

@@ -1,6 +1,7 @@
 :root {
     --bg-color: #14274E;
     --nav-text: rgb(243, 243, 243);
+    --border-color: rgb(118, 118, 118);
   }
 
 * {
