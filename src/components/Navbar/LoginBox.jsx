@@ -1,5 +1,4 @@
 import React from 'react'
-import createUser from "../../js/utils";
 import { AiOutlineClose } from "react-icons/ai";
 import { BiSolidUserCircle } from "react-icons/bi";
 import { useAuth0, } from "@auth0/auth0-react";

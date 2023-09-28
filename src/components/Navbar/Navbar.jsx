@@ -36,7 +36,7 @@ const Navbar = () => {
             <li onClick={() => navigate("/")}>
               My Feed
             </li>
-            <li>
+            <li onClick={() => navigate("/bookmarks")}>
               Bookmarks
             </li>
           </ul>

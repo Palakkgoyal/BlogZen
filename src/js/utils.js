@@ -90,3 +90,11 @@ export function getCloudinaryImgUrl(img_id) {
     
     return `https://res.cloudinary.com/dxzo4ug5i/image/upload/${img_id}`
 }
+
+export function formatTimestamp(time) {
+    const timeArr = time.split("T")[0].split("-") // YY - MM - DD
+    const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const formattedStr = `${monthArr[+timeArr[1] - 1]} ${timeArr[2]}, ${timeArr[0]}`
+
+    return formattedStr;
+}

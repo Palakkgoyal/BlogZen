@@ -18,10 +18,9 @@ const BlogComponent = () => {
     const navigate = useNavigate()
     const content = blog?.content?.split('\n');
     const blogImgSrc = getCloudinaryImgUrl(blog?.image_id)
-
     const user_id = blog?.user_id
-    const [user, setUser] = useUser(user_id)
-    const [suggestions, setSuggestions] = useSuggestions(user_id)
+    const [user, setUser] = useUser(blog?.user_id)
+    const [suggestions, setSuggestions] = useSuggestions(blog?.user_id)
     const [comments, setComments] = useComments()
     const [isBookmarked, setIsBookmarked] = useBookmark()
     const { user: user_current } = useAuth0()
@@ -189,9 +188,6 @@ const BlogComponent = () => {
 
             <div className="extras_container">
                 <div className="">
-                    <BiHeart className="extras_icon extras_like_icon" /> (11)
-                </div>
-                <div className="">
                     {isBookmarked ? (
                         <BsFillBookmarkFill
                             className="extras_icon filled_bookmarked"
@@ -249,7 +245,7 @@ const BlogComponent = () => {
                         className="bpa_name"
                         onClick={() => navigate(`/user/${user_id}`)}
                     >
-                        {user?.name}
+                        {user?.name? user.name : "User"} 
                     </p>
                 </div>
             </div>
@@ -300,6 +296,7 @@ function useUser(user_id) {
 
 function useSuggestions(user_id) {
     const [suggestions, setSuggestions] = useState([])
+    const { post_id } = useParams()
 
     useEffect(() => {
         async function getBlogData() {
@@ -307,7 +304,7 @@ function useSuggestions(user_id) {
             setSuggestions(blogData?.response?.items)
         }
         getBlogData()
-    }, [user_id])
+    }, [user_id, post_id])
 
     return [suggestions, setSuggestions]
 }
@@ -400,8 +397,8 @@ function useBookmark() {
             }
         }
 
-        //    getBookmark()
-    }, [])
+           getBookmark()
+    }, [post_id])
 
     return [isBookmarked, setIsBookmarked]
 }

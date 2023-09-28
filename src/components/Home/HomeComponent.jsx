@@ -3,7 +3,7 @@ import { user } from "../../assets"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
-import { getUser } from "../../js/utils"
+import { getUser, formatTimestamp } from "../../js/utils"
 
 // React icons 
 import { BsPencil, BsLinkedin, BsDiscord } from "react-icons/bs";
@@ -14,14 +14,6 @@ import { PiChatsCircleLight } from "react-icons/pi";
 const HomeComponent = () => {
     const [blogs, setBlogs] = useBlogs()
     const navigate = useNavigate()
-
-    function formatTimestamp(time) {
-        const timeArr = time.split("T")[0].split("-") // YY - MM - DD
-        const monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
-        const formattedStr = `${monthArr[+timeArr[1] - 1]} ${timeArr[2]}, ${timeArr[0]}`
-
-        return formattedStr;
-    }
 
     let mappedBlogs = blogs.map((blog) => {
         // 2023-09-22T11:42:51Z
