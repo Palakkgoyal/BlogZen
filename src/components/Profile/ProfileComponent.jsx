@@ -8,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 const ProfileComponent = () => {
     const { user, isLoading, logout } = useAuth0();
-    const [blogs, setBlogs] = useGetUser();
+    const [blogs, setBlogs] = useGetPublishedBlogs();
+    const [drafts, setDrafts] = useGetDrafts();
     const navigate = useNavigate()
 
 
@@ -28,12 +29,13 @@ const ProfileComponent = () => {
         return <Loader />
     }
 
-    const suggestionsArr = blogs.map((suggestion) => {
+    function formatBlog(suggestion, draft=false) {
         const cover_img = getCloudinaryImgUrl(suggestion?.image_id)
+        const navigationEndpoint = draft? "draft" : "blog"
         return (
             <div
                 className="bps_container profile_blog_box"
-                onClick={() => navigate(`/blog/${suggestion.post_id}`)}
+                onClick={() => navigate(`/${navigationEndpoint}/${suggestion.post_id}`)}
                 key={suggestion.post_id}
             >
                 <div className="bps_content_container">
@@ -56,7 +58,11 @@ const ProfileComponent = () => {
                 </div>
             </div>
         )
-    })
+    }
+
+    const draftsArr = drafts.map((draft) => formatBlog(draft, true))
+
+    const suggestionsArr = blogs.map((suggestion) => formatBlog(suggestion))
 
 
     return (
@@ -93,15 +99,26 @@ const ProfileComponent = () => {
                     <div className="profile_blogs_sub_container">
                         {suggestionsArr.length > 0 ? suggestionsArr : (
                             <p
-                            
+                                style={{ color: "whitesmoke", opacity: "0.6" }}
                             >
                                 You haven't published anything yet...
                             </p>
                         )}
                     </div>
                 </div>
-                <div>
-
+                <div className="profile_drafts_container">
+                    <h2 className="profile_blogs_heading">
+                        Drafts
+                    </h2>
+                    <div className="profile_blogs_sub_container">
+                        {draftsArr.length > 0 ? draftsArr : (
+                            <p
+                                style={{ color: "whitesmoke", opacity: "0.6" }}
+                            >
+                                You haven't published anything yet...
+                            </p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,7 +128,7 @@ const ProfileComponent = () => {
 export default ProfileComponent
 
 
-function useGetUser() {
+function useGetPublishedBlogs() {
     const [blogs, setBlogs] = useState([])
     const { user } = useAuth0();
 
@@ -129,3 +146,23 @@ function useGetUser() {
 
     return [blogs, setBlogs]
 }
+
+function useGetDrafts() {
+    const [drafts, setDrafts] = useState([])
+    const { user } = useAuth0();
+
+    useEffect(() => {
+        async function handleGetDrafts() {
+            const res = await getUser(user?.email)
+            const user_id = res?.response?.items[0]?.user_id;
+            const draftsData = await getBlog(user_id, false, "getDrafts")
+            setDrafts(draftsData.response.items)
+        }
+
+        handleGetDrafts()
+
+    }, [user])
+
+    return [drafts, setDrafts]
+}
+

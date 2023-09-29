@@ -69,6 +69,12 @@
     margin-top: 60px;
 }
 
+.profile_drafts_container {
+    margin-top: 50px;
+    padding-top: 35px;
+    border-top: 1px solid rgb(151, 148, 148);
+}
+
 @media (max-width: 1100px) {
     .profile_blogs_sub_container {
         justify-content: center

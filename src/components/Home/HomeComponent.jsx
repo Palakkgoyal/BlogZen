@@ -20,29 +20,29 @@ const HomeComponent = () => {
         const cover_img_url = `https://res.cloudinary.com/dxzo4ug5i/image/upload/${blog.image_id}`
         const timestamp = formatTimestamp(blog.timestamp)
         return (
-            <div className="hb_container" key={blog.post_id}> 
+            <div className="hb_container" key={blog?.post_id}> 
                 <div className="hb_user_details">
                     <img src={blog?.user?.image ? blog.user.image : user}
                         alt={blog?.user?.name}
                         className="hb_user_image"
                     />
                     <div>
-                        <h3 className="hb_user_name">{blog.user.name}</h3>
+                        <h3 className="hb_user_name">{blog?.user?.name}</h3>
                         <p className="hb_post_date">{timestamp}</p>
                     </div>
                 </div>
-                <div className="hb_blog_details" onClick={() => navigate(`/blog/${blog.post_id}`)}>
-                    {blog.image_id !== "%!s(<nil>)" && (
+                <div className="hb_blog_details" onClick={() => navigate(`/blog/${blog?.post_id}`)}>
+                    {blog?.image_id !== "%!s(<nil>)" && (
                         <div className="hb_cover_image_container">
-                            <img src={cover_img_url} alt={blog.title} className="hb_cover_image" />
+                            <img src={cover_img_url} alt={blog?.title} className="hb_cover_image" />
                         </div>
                     )}
                     <div>
                         <h2 className="hb_title">
-                            {blog.title}
+                            {blog?.title}
                         </h2>
                         <p className="hb_content">
-                            {blog.content.substring(0, 250)}...
+                            {blog?.content.substring(0, 250)}...
                         </p>
                     </div>
                 </div>

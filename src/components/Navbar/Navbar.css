@@ -159,9 +159,9 @@
 }
 
 @media (max-width: 1280px) {
-    .nav_center_part {
+    /* .nav_center_part {
         display: none;
-    }
+    } */
 }
 
 @media (max-width: 800px) {

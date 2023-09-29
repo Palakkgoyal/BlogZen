@@ -2,18 +2,42 @@ import "./DraftComponent.css"
 import { useState, useRef, useEffect } from "react"
 import { CiImageOn } from "react-icons/ci";
 import { useAuth0, } from "@auth0/auth0-react";
-import { getUser, generateUuid } from "../../js/utils";
+import { getUser, generateUuid, getBlog, getCloudinaryImgUrl } from "../../js/utils";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import Loader from "../Loader/Loader"
 
 const DraftComponent = () => {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [coverImage, setCoverImage] = useState("")
+  const [alreadyHasCover, setAlreadyHasCover] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
   const titleRef = useRef(null)
   const contentRef = useRef(null)
+  const location = useLocation()
+  const isEditingDraft = location.pathname.substring(6).length > 2
+  const { post_id } = useParams();
+
+
+  useEffect(() => {
+    async function getBlogData() {
+      const blogData = await getBlog(post_id, true, "getDraftById")
+      const data = blogData.response.items[0]
+      setTitle(data?.title)
+      setContent(data?.content)
+      if (data?.image_id && data?.image_id !== "%!s(<nil>)") {
+        const img = getCloudinaryImgUrl(data?.image_id)
+        setAlreadyHasCover(true)
+        setCoverImage(img)
+      }
+      window.scrollTo(0, 0)
+    }
+
+    if (isEditingDraft) {
+      getBlogData()
+    }
+  }, [post_id])
 
   const navigate = useNavigate()
   useTextareaResize(titleRef)
@@ -25,8 +49,61 @@ const DraftComponent = () => {
     setCoverImage(e.target.files[0]);
   }
 
-  async function handlePublish(publish) {
+  // EDIT DRAFT FUNCTION
+
+  async function handleEditDraft() {
     setIsPosting(true)
+    if (title.length < 2) {
+      toast.error("Please write a valid title!", {
+        position: toast.POSITION.TOP_RIGHT
+      })
+      setIsPosting(false)
+      return
+    }
+
+    if (content.length < 5) {
+      toast.error("Please write a longer content!", {
+        position: toast.POSITION.TOP_RIGHT
+      })
+      setIsPosting(false)
+      return
+    }
+
+    const image_id = await uploadImage()
+      .then((res) => {
+        return res.public_id
+      })
+      .catch((err) => {
+        setIsPosting(false)
+        console.error(err)
+      })
+    try {
+      fetch(`https://wasteful-brown.cmd.outerbase.io/editDraft?post_id=${post_id}`, {
+        method: 'PUT',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: title,
+          content: content,
+          image_id: image_id,
+        }),
+      })
+      navigate("/")
+    }
+    catch (error) {
+      toast.error("An error occured, please try again later", {
+        position: toast.POSITION.TOP_RIGHT
+      })
+    }
+    finally {
+      setIsPosting(false)
+    }
+  }
+
+  async function handlePublish(publish=true) {
+    setIsPosting(true)
+
     if (title.length < 2) {
       toast.error("Please write a valid title!", {
         position: toast.POSITION.TOP_RIGHT
@@ -54,6 +131,8 @@ const DraftComponent = () => {
         console.error(err)
       })
 
+      console.log(user_id, "user_id")
+
     const image_id = await uploadImage()
       .then((res) => {
         return res.public_id
@@ -65,9 +144,10 @@ const DraftComponent = () => {
 
     if (user_id) {
       const generatedUuid = generateUuid(coverImage?.name ? coverImage.name : "")
-
+      console.log("user id present")
       async function publishBlog() {
         try {
+          console.log("publishing blog...")
           await fetch(url, {
             method: "POST",
             headers: {
@@ -78,22 +158,28 @@ const DraftComponent = () => {
               user_id: user_id,
               title: title,
               content: content,
-              image_id: image_id
+              image_id: image_id,
             }),
           });
 
           const publish_msg = publish ? "Blog published successfully!" : "Saved as draft successfully!"
 
           // RESET STATE 
-          setTitle("")
-          setContent("")
-          setCoverImage("")
+          if (!isEditingDraft) {
+            console.log("success")
+            setTitle("")
+            setContent("")
+            setCoverImage("")
 
-          toast.success(publish_msg, {
-            position: toast.POSITION.TOP_RIGHT
-          })
+            toast.success(publish_msg, {
+              position: toast.POSITION.TOP_RIGHT
+            })
 
-          navigate("/")
+            navigate("/")
+          }
+          else {
+            await deleteDraft()
+          }
         } catch (error) {
           console.error(error)
           toast.error("An error occured, please try again later", {
@@ -148,6 +234,35 @@ const DraftComponent = () => {
     return imgData;
   }
 
+  async function deleteDraft() {
+    try {
+      fetch(`https://wasteful-brown.cmd.outerbase.io/deleteDraft?post_id=${post_id}`, {
+        method: 'DELETE',
+        headers: {
+          'content-type': 'application/json'
+        },
+      })
+      setTitle("")
+      setContent("")
+      setCoverImage("")
+
+      toast.success(publish_msg, {
+        position: toast.POSITION.TOP_RIGHT
+      })
+
+      navigate("/")
+    }
+    catch (error) {
+      toast.error("There was an error removing Draft!", {
+        position: toast.POSITION.TOP_RIGHT
+      })
+      console.log(error, "err")
+    }
+    finally {
+      setIsPosting(false)
+    }
+  }
+
 
   return (
     <div className="draft_container" style={{ position: "relative" }}>
@@ -166,8 +281,8 @@ const DraftComponent = () => {
           accept="image/*"
           onChange={handleImgChange}
         />
-        {coverImage.name && (
-          <img src={URL.createObjectURL(coverImage)} alt="" className="cover_image" />
+        {(coverImage.name || alreadyHasCover) && (
+          <img src={alreadyHasCover? coverImage : URL.createObjectURL(coverImage)} alt="" className="cover_image" />
         )}
       </div>
 
@@ -200,7 +315,7 @@ const DraftComponent = () => {
       <div className="blog_btn_container">
         <button
           className="save_draft_btn blog_btn"
-          onClick={() => handlePublish(false)}
+          onClick={() => isEditingDraft ? handleEditDraft() : handlePublish(false)}
         >
           Save Draft
         </button>
@@ -229,3 +344,5 @@ function useTextareaResize(textareaRef) {
   }, [])
 
 }
+
+// Lorem ipsum dolor sit amet consectetur, adipisicing elit. Doloremque fuga laborum facilis iste. Recusandae excepturi odio iste provident dolores, necessitatibus est? Voluptates corporis mollitia voluptatibus inventore reprehenderit velit consectetur veritatis!

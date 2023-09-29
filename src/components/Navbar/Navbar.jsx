@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="nav_main_container glass" ref={navRef}>
         <nav className="nav_container">
           <div className="nav_sub_container">
-            <FiMenu className="nav_icon menu_icon" />
+            {/* <FiMenu className="nav_icon menu_icon" /> */}
             <img src={logo_transparent} alt="BlogZen Logo" className="nav_logo" />
             <img src={B_logo} alt="BlogZen Logo" className="nav_logo_small" />
           </div>
@@ -41,14 +41,14 @@ const Navbar = () => {
             </li>
           </ul>
           <ul className="nav_sub_container nav_right_part">
-            <li className="nav_icon">
+            {/* <li className="nav_icon">
               <CiSearch />
-            </li>
-            <li className="nav_write_btn">
+            </li> */}
+            <li className="nav_write_btn" onClick={() => navigate("/draft")}>
               <BsPencil />
               <span
                 className="nav_write_btn_text"
-                onClick={() => navigate("/draft")}
+                
               >
                 Write
               </span>

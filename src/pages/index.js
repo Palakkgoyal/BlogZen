@@ -4,6 +4,7 @@ import Layout from "./Layout/Layout";
 import Draft from './Draft';
 import Blog from "./Blog";
 import Bookmarks from "./Bookmarks";
+import EditDraft from "./EditDraft";
 
 export {
     Home,
@@ -12,4 +13,5 @@ export {
     Draft,
     Blog,
     Bookmarks,
+    EditDraft,
 }
