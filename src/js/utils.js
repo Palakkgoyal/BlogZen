@@ -40,8 +40,8 @@ export async function getUser(paramVal, byEmail=true) {
     const endpoint = byEmail? "getUser" : "getUserById"
     try {
         const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/${endpoint}?${param}=${paramVal}`, {
-            method: 'GET',
-            headers: {
+            'method': 'GET',
+            'headers': {
                 'Content-Type': 'application/json'
             },
         });
@@ -49,13 +49,11 @@ export async function getUser(paramVal, byEmail=true) {
         if (!response.ok) {
             throw new Error(`HTTP Error! Status: ${response.status}`);
         }
-
+        // console.log(await response.text())
         const userData = await response.json(); // Parse the response body as JSON
         return userData; // Return the parsed data
     } catch (error) {
-        toast.error("There was an error while getting user!", {
-            position: toast.POSITION.TOP_RIGHT
-        })
+        console.log(error, "err")
         throw error; // Rethrow the error to handle it elsewhere if needed
     }
 }
@@ -66,8 +64,8 @@ export async function getBlog(paramVal, byPostId=true, endpoint) {
 
     try {
         const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/${blogEndpoint}?${param}=${paramVal}`, {
-            method: 'GET',
-            headers: {
+            'method': 'GET',
+            'headers': {
                 'Content-Type': 'application/json'
             },
         });

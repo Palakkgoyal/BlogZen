@@ -5,12 +5,13 @@ import { toast } from "react-toastify";
 import { getBlog, getUser, formatTimestamp, getCloudinaryImgUrl } from '../../js/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import { user as userImg } from '../../assets';
+import Loader from "../Loader/Loader";
 
-import { BiBookmarkPlus } from "react-icons/bi";
 import { PiChatsCircleLight } from "react-icons/pi";
 
 const BookmarkComponent = () => {
-  const [bookmarks, setBookmarks] = useAllBookmarks()
+  const [loading, setLoading] = useState(true)
+  const [bookmarks, setBookmarks] = useAllBookmarks(setLoading)
   const navigate = useNavigate()
 
   let mappedBlogs = bookmarks.map((blog) => {
@@ -56,7 +57,7 @@ const BookmarkComponent = () => {
 
   return (
     <div className="bookmarks_container">
-      {mappedBlogs}
+      {loading? <Loader /> : mappedBlogs}
     </div>
   )
 }
@@ -64,7 +65,7 @@ const BookmarkComponent = () => {
 export default BookmarkComponent
 
 
-function useAllBookmarks() {
+function useAllBookmarks(setLoading) {
   const [bookmarks, setBookmarks] = useState([])
   const { user } = useAuth0();
   const email = user?.email;
@@ -73,9 +74,9 @@ function useAllBookmarks() {
     async function getBookmarks() {
       try {
         const response = await fetch(`https://wasteful-brown.cmd.outerbase.io/getBookmark?email=${email}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
+          'method': 'GET',
+          'headers': {
+              'Content-Type': 'application/json'
           },
         });
 
@@ -90,12 +91,15 @@ function useAllBookmarks() {
           const post_id = bookmark.post_id
           const res = await getBlog(post_id, true)
           const blog = res.response.items[0]
+          console.log(blog.user_id)
           const user = await getUser(blog?.user_id, false);
+          console.log(user, "user")
           return {
             ...blog,
             user: user.response.items[0],
           }
         }))
+
 
         setBookmarks(allBookmarks)
       }
@@ -103,6 +107,10 @@ function useAllBookmarks() {
         toast.error("There was an error getting bookmarks!", {
           position: toast.POSITION.TOP_RIGHT
         })
+      }
+
+      finally {
+        setLoading(false)
       }
     }
 

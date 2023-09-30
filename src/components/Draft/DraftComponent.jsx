@@ -246,7 +246,7 @@ const DraftComponent = () => {
       setContent("")
       setCoverImage("")
 
-      toast.success(publish_msg, {
+      toast.success("Blog published successfully", {
         position: toast.POSITION.TOP_RIGHT
       })
 

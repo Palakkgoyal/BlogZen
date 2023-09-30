@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import { getUser, formatTimestamp } from "../../js/utils"
+import Loader from "../Loader/Loader"
 
 // React icons 
 import { BsPencil, BsLinkedin, BsDiscord } from "react-icons/bs";
@@ -12,7 +13,8 @@ import { BiBookmarkPlus } from "react-icons/bi";
 import { PiChatsCircleLight } from "react-icons/pi";
 
 const HomeComponent = () => {
-    const [blogs, setBlogs] = useBlogs()
+    const [loading, setLoading] = useState(true)
+    const [blogs, setBlogs] = useBlogs(setLoading)
     const navigate = useNavigate()
 
     let mappedBlogs = blogs.map((blog) => {
@@ -61,7 +63,7 @@ const HomeComponent = () => {
     return (
         <div className="home_main_container">
             <div className="home_blog_main_container">
-                {mappedBlogs}
+                {loading? <Loader /> : mappedBlogs}
             </div>
 
             <div className="home_sidebar_container">
@@ -152,23 +154,20 @@ const HomeComponent = () => {
 export default HomeComponent
 
 
-function useBlogs() {
+function useBlogs(setLoading) {
     const [blogs, setBlogs] = useState([])
 
     useEffect(() => {
         async function getBlogs() {
             try {
-                const response = await fetch("https://wasteful-brown.cmd.outerbase.io/getBlogs", {
+                const response = await fetch('https://wasteful-brown.cmd.outerbase.io/getBlogs', {
                     'method': 'GET',
                     'headers': {
-                        'content-type': 'application/json'
+                        'Content-Type': 'application/json'
                     },
-                })
+                });
 
                 if (!response.ok) {
-                    toast.error("There was an error getting blogs!", {
-                        position: toast.POSITION.TOP_RIGHT
-                    })
                     throw new Error(`HTTP Error! Status: ${response.status}`)
                 }
 
@@ -182,9 +181,6 @@ function useBlogs() {
                             user: user.response.items[0],
                         };
                     } catch (error) {
-                        toast.error("There was an error getting blogs!", {
-                            position: toast.POSITION.TOP_RIGHT
-                        })
                         return blog; // Return the original blog item without the user information.
                     }
                 }))
@@ -198,6 +194,10 @@ function useBlogs() {
                 })
                 throw error;
             }
+
+            finally {
+                setLoading(false)
+            }
         }
 
         getBlogs()
@@ -205,3 +205,5 @@ function useBlogs() {
 
     return [blogs, setBlogs]
 }
+
+// Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque amet quo aperiam expedita non voluptas consectetur pariatur, dolor quaerat sint quasi voluptatum in perspiciatis labore ipsum accusamus iusto consequuntur quibusdam!

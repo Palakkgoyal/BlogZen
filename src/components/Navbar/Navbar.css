@@ -8,6 +8,7 @@
     transition: 0.2s ease-in;
     border-radius: 0;
     color: var(--nav-text);
+    z-index: 999;
 }
 
 .nav_container {
