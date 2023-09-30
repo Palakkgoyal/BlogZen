@@ -93,6 +93,7 @@
 
 .login_box {
     position: absolute;
+    z-index: 99;
     font-size: 18px;
     top: 50%;
     left: 50%;
